@@ -88,6 +88,8 @@ export class CSVImportIntegration {
                                         outputRow.pending = false
                                     }
 
+                                    outputRow.f_name = ""
+
                                     return outputRow
                                 })
 

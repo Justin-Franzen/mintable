@@ -30,6 +30,7 @@ export interface Account {
 export interface BaseAccountConfig {
     id: string
     integration: IntegrationId
+    account: string
 }
 
 export interface PlaidAccountConfig extends BaseAccountConfig {

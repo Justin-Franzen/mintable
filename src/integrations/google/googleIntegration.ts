@@ -227,6 +227,7 @@ export class GoogleIntegration {
 
     public formatSheets = async (): Promise<sheets_v4.Schema$BatchUpdateSpreadsheetResponse> => {
         const sheets = await this.getSheets()
+        sheets.shift()
 
         return this.sheets
             .batchUpdate({
@@ -258,7 +259,7 @@ export class GoogleIntegration {
                                     },
                                     fields: 'gridProperties.frozenRowCount'
                                 }
-                            },
+                            } ,
                             {
                                 autoResizeDimensions: {
                                     dimensions: {
@@ -352,7 +353,7 @@ export class GoogleIntegration {
         await this.sortSheets()
 
         // Format, etc.
-        await this.formatSheets()
+        //await this.formatSheets()
 
         logInfo('You can view your sheet here:\n')
         console.log(`https://docs.google.com/spreadsheets/d/${this.googleConfig.documentId}`)
@@ -366,6 +367,7 @@ export class GoogleIntegration {
         await this.sortSheets()
 
         // Format, etc.
+        //await this.formatSheets()
         await this.formatSheets()
 
         logInfo('You can view your sheet here:\n')

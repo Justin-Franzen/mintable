@@ -57,7 +57,7 @@ export default async () => {
             .map(condition => new RegExp(condition.pattern, condition.flags).test(transaction[condition.property]))
             .every(condition => condition === true)
     }
-
+    
     // Transaction Rules
     if (config.transactions.rules) {
         let countOverridden = 0

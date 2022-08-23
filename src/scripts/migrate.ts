@@ -66,7 +66,8 @@ export default () => {
                 const account: AccountConfig = {
                     id: key.replace('PLAID_TOKEN_', ''),
                     integration: IntegrationId.Plaid,
-                    token: oldConfig[key]
+                    token: oldConfig[key],
+                    account: ""
                 }
                 accounts[account.id] = account
             }

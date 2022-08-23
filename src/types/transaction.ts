@@ -6,6 +6,8 @@ export interface Transaction {
 
     // merchant or transaction description
     name: string
+    // merchant or transaction description
+    f_name?: string
     // date of transaction
     date: Date
     // amount of transaction (purchases are positive; refunds are negative)

@@ -5,47 +5,72 @@ import { IntegrationId } from '../../types/integrations'
 import open from 'open'
 import { GoogleIntegration } from './googleIntegration'
 import { logInfo, logError } from '../../common/logging'
+import * as os from 'os'
 
 export default async () => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
         try {
-            console.log(
-                '\nThis script will walk you through setting up the Google Sheets integration. Follow these steps:'
-            )
-            console.log('\n\t1. Create a new Google Sheet (https://sheets.new)')
-            console.log('\t2. Visit https://developers.google.com/sheets/api/quickstart/nodejs')
-            console.log("\t3. Click 'Enable the Google Sheets API, select 'Desktop App', and click 'Create'")
-            console.log('\t4. Answer the following questions:\n')
+            var credentials = {
+                name:"",
+                clientId:"",
+                clientSecret:"",
+                documentId:""
+            }
+            const fs = require('fs');
+            try {
+                const DEFAULT_GOOGLE_FILE = '~/client_secret.json'
+                const path = DEFAULT_GOOGLE_FILE.replace(/^~(?=$|\/|\\)/, os.homedir())
+                let rawdata = fs.readFileSync(path);
+                let clientConfig = JSON.parse(rawdata);
 
-            const credentials = await prompts([
-                {
-                    type: 'text',
-                    name: 'name',
-                    message: 'What would you like to call this integration?',
-                    initial: 'Google Sheets',
-                    validate: (s: string) =>
-                        0 < s.length && s.length <= 64 ? true : 'Must be between 0 and 64 characters in length.'
-                },
-                {
-                    type: 'password',
-                    name: 'clientId',
-                    message: 'Client ID',
-                    validate: (s: string) => (s.length >= 8 ? true : 'Must be at least 8 characters in length.')
-                },
-                {
-                    type: 'password',
-                    name: 'clientSecret',
-                    message: 'Client Secret',
-                    validate: (s: string) => (s.length >= 8 ? true : 'Must be at least 8 characters in length.')
-                },
-                {
-                    type: 'text',
-                    name: 'documentId',
-                    message:
-                        'Document ID (From the sheet you just created: https://docs.google.com/spreadsheets/d/DOCUMENT_ID/edit)',
-                    validate: (s: string) => (s.length >= 8 ? true : 'Must be at least 8 characters in length.')
-                }
-            ])
+                console.log(clientConfig)
+                credentials['name'] = 'Google Sheets'
+                credentials['clientId']=clientConfig.installed.client_id
+                credentials['clientSecret']=clientConfig.installed.client_secret
+                credentials['documentId']=clientConfig.installed.documentId
+                
+            } catch (error) {
+                console.log(error)
+
+                console.log(
+                    '\nThis script will walk you through setting up the Google Sheets integration. Follow these steps:'
+                )
+                console.log('\n\t1. Create a new Google Sheet (https://sheets.new)')
+                console.log('\t2. Visit https://developers.google.com/sheets/api/quickstart/nodejs')
+                console.log("\t3. Click 'Enable the Google Sheets API, select 'Desktop App', and click 'Create'")
+                console.log('\t4. Answer the following questions:\n')
+    
+                credentials = await prompts([
+                    {
+                        type: 'text',
+                        name: 'name',
+                        message: 'What would you like to call this integration?',
+                        initial: 'Google Sheets',
+                        validate: (s: string) =>
+                            0 < s.length && s.length <= 64 ? true : 'Must be between 0 and 64 characters in length.'
+                    },
+                    {
+                        type: 'password',
+                        name: 'clientId',
+                        message: 'Client ID',
+                        validate: (s: string) => (s.length >= 8 ? true : 'Must be at least 8 characters in length.')
+                    },
+                    {
+                        type: 'password',
+                        name: 'clientSecret',
+                        message: 'Client Secret',
+                        validate: (s: string) => (s.length >= 8 ? true : 'Must be at least 8 characters in length.')
+                    },
+                    {
+                        type: 'text',
+                        name: 'documentId',
+                        message:
+                            'Document ID (From the sheet you just created: https://docs.google.com/spreadsheets/d/DOCUMENT_ID/edit)',
+                        validate: (s: string) => (s.length >= 8 ? true : 'Must be at least 8 characters in length.')
+                    }
+                ])
+            }
+            
 
             updateConfig(config => {
                 let googleConfig = (config.integrations[IntegrationId.Google] as GoogleConfig) || defaultGoogleConfig

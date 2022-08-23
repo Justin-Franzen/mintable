@@ -53,7 +53,8 @@ export class PlaidIntegration {
             config.accounts[tokenResponse.item_id] = {
                 id: tokenResponse.item_id,
                 integration: IntegrationId.Plaid,
-                token: tokenResponse.access_token
+                token: tokenResponse.access_token,
+                account: ""
             }
             this.config = config
             return config
@@ -214,17 +215,18 @@ export class PlaidIntegration {
                     accountId: account.account_id,
                     mask: account.mask,
                     institution: account.name,
-                    account: account.official_name,
+                    account: accountConfig.account || account.official_name,
                     type: account.subtype || account.type,
                     current: account.balances.current,
                     available: account.balances.available,
                     limit: account.balances.limit,
                     currency: account.balances.iso_currency_code || account.balances.unofficial_currency_code
                 }))
-
+                
                 const transactions: Transaction[] = data.transactions.map(transaction => ({
                     integration: IntegrationId.Plaid,
                     name: transaction.name,
+                    f_name: "",
                     date: parseISO(transaction.date),
                     amount: transaction.amount,
                     currency: transaction.iso_currency_code || transaction.unofficial_currency_code,
